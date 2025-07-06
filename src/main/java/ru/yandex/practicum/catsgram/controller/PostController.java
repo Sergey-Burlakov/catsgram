@@ -1,7 +1,10 @@
 package ru.yandex.practicum.catsgram.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.service.PostService;
 
@@ -12,6 +15,7 @@ import java.util.Collection;
 public class PostController {
     private final PostService postService;
 
+    @Autowired
     public PostController(PostService postService) {
         this.postService = postService;
     }
@@ -19,6 +23,14 @@ public class PostController {
     @GetMapping
     public Collection<Post> findAll() {
         return postService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Post findPostById(@PathVariable Long id){
+        return postService.findPostById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Пост с id=" + id + " не найден"
+        ));
     }
 
     @PostMapping

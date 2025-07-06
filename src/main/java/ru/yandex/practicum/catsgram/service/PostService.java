@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 // Указываем, что класс PostService - является бином и его
 // нужно добавить в контекст приложения
@@ -53,6 +54,13 @@ public class PostService {
             return oldPost;
         }
         throw new NotFoundException("Пост с id = " + newPost.getId() + " не найден");
+    }
+
+    public Optional<Post> findPostById(Long id){
+        if (posts.containsKey(id)){
+            return Optional.of(posts.get(id));
+        }
+        return Optional.empty();
     }
 
     private long getNextId() {

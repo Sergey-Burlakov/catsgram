@@ -1,6 +1,9 @@
 package ru.yandex.practicum.catsgram.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.catsgram.model.User;
 import ru.yandex.practicum.catsgram.service.UserService;
 
@@ -12,13 +15,22 @@ public class UserController {
 
     private final UserService userService;
 
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public Collection<User> findall() {
+    public Collection<User> findAll(){
         return userService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public User findUserById(@PathVariable Long id) {
+        return userService.findUserById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Пользователь с id=" + id + " не найден"
+                ));
     }
 
     @PostMapping
@@ -30,5 +42,4 @@ public class UserController {
     public User update(@RequestBody User newUser) {
         return userService.update(newUser);
     }
-
 }
