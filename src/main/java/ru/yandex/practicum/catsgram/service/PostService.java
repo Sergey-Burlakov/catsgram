@@ -74,10 +74,7 @@ public class PostService {
     }
 
     public Optional<Post> findPostById(Long id){
-        if (posts.containsKey(id)){
-            return Optional.of(posts.get(id));
-        }
-        return Optional.empty();
+        return Optional.ofNullable(posts.get(id));
     }
 
     private long getNextId() {
