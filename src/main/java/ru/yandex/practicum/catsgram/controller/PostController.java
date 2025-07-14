@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.catsgram.exception.ParameterNotValidException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.model.SortOrder;
 import ru.yandex.practicum.catsgram.service.PostService;
@@ -28,11 +29,18 @@ public class PostController {
 
         SortOrder sortReal = SortOrder.from(sort);
         if (sortReal == null) {
-            sortReal = SortOrder.DESCENDING;
+            throw new ParameterNotValidException("sort", String.format("Получено: %s должно быть: ask или desc", sort));
         }
-
-        int fromReal = Integer.parseInt(from);
         int sizeReal = Integer.parseInt(size);
+        if (sizeReal <= 0) {
+            throw new ParameterNotValidException("size", String.format("Размер должен быть больше нуля," +
+                    " текущее значение : %s", size));
+        }
+        int fromReal = Integer.parseInt(from);
+        if (fromReal < 0) {
+            throw new ParameterNotValidException("from", String.format("Начало выборки должно быть положительным" +
+                    " числом,текущее значение : %s", from));
+        }
 
         return postService.findAll(sortReal, fromReal, sizeReal);
     }
